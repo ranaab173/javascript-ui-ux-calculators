@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beautiful Calculator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%); /* Gradient background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px; /* Add some padding for smaller screens */
+            box-sizing: border-box;
+        }
+
+        /* Custom styles for button hover effects and active states */
+        .calculator-button {
+            transition: all 0.1s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        .calculator-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .calculator-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .operator-button {
+            background-color: #fca311; /* Orange for operators */
+            color: white;
+        }
+
+        .operator-button:hover {
+            background-color: #e0940f;
+        }
+
+        .equals-button {
+            background-color: #1a73e8; /* Blue for equals */
+            color: white;
+        }
+
+        .equals-button:hover {
+            background-color: #1660cc;
+        }
+
+        .clear-button, .delete-button {
+            background-color: #ef4444; /* Red for clear/delete */
+            color: white;
+        }
+
+        .clear-button:hover, .delete-button:hover {
+            background-color: #dc2626;
+        }
+
+        .number-button, .decimal-button {
+            background-color: #e2e8f0; /* Light gray for numbers/decimal */
+            color: #333;
+        }
+
+        .number-button:hover, .decimal-button:hover {
+            background-color: #cbd5e1;
+        }
+
+        /* Ensure the calculator scales down on very small screens */
+        @media (max-width: 400px) {
+            .calculator-grid {
+                grid-template-columns: repeat(4, 1fr); /* Keep 4 columns */
+                gap: 10px;
+            }
+            .calculator-button {
+                padding: 15px 0; /* Adjust padding for smaller buttons */
+                font-size: 1.2rem;
+            }
+            .calculator-container {
+                width: 100%; /* Full width on very small screens */
+                padding: 15px;
+            }
+        }
+
+        /* Specific styles for the display to handle multi-line text */
+        .display {
+            /* Adjusted height to better fit one line, but still allow for two if needed by JS */
+            height: 7.2rem; /* Adjusted height for 20% overall increase */
+            white-space: nowrap; /* Start with no wrapping */
+            word-break: normal; /* Default word break behavior */
+            overflow-y: hidden; /* Crucial: Prevents vertical scrollbar and forces content to fit */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Changed to center to keep text in the middle vertically */
+            text-align: right; /* Ensure text is right-aligned */
+            padding: 1rem 1rem 1rem 1rem; /* Adjusted padding to be more balanced for single line */
+            font-size: 3rem; /* Base font size, JS will adjust */
+            line-height: 1.1; /* Slightly reduced line height for closer lines */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator-container bg-white p-6 rounded-2xl shadow-2xl w-full max-w-md">
+        <!-- Display -->
+        <!-- Added data-original-font-size to store the initial font size -->
+        <div class="display bg-gray-800 text-white rounded-xl mb-4 font-light" data-original-font-size="3rem">
+            0
+        </div>
+
+        <!-- Buttons Grid -->
+        <div class="calculator-grid grid grid-cols-4 gap-3">
+            <!-- Row 1 -->
+            <button class="calculator-button clear-button col-span-2 py-6 rounded-xl text-2xl font-semibold" data-action="clear">AC</button>
+            <button class="calculator-button delete-button py-6 rounded-xl text-2xl font-semibold" data-action="delete">DEL</button>
+            <button class="calculator-button operator-button py-6 rounded-xl text-2xl font-semibold" data-action="divide">/</button>
+
+            <!-- Row 2 -->
+            <button class="calculator-button number-button py-6 rounded-xl text-2xl font-semibold" data-value="7">7</button>
+            <button class="calculator-button number-button py-6 rounded-xl text-2xl font-semibold" data-value="8">8</button>
+            <button class="calculator-button number-button py-6 rounded-xl text-2xl font-semibold" data-value="9">9</button>
+            <button class="calculator-button operator-button py-6 rounded-xl text-2xl font-semibold" data-action="multiply">*</button>
+
+            <!-- Row 3 -->
+            <button class="calculator-button number-button py-6 rounded-xl text-2xl font-semibold" data-value="4">4</button>
+            <button class="calculator-button number-button py-6 rounded-xl text-2xl font-semibold" data-value="5">5</button>
+            <button class="calculator-button number-button py-6 rounded-xl text-2xl font-semibold" data-value="6">6</button>
+            <button class="calculator-button operator-button py-6 rounded-xl text-2xl font-semibold" data-action="subtract">-</button>
+
+            <!-- Row 4 -->
+            <button class="calculator-button number-button py-6 rounded-xl text-2xl font-semibold" data-value="1">1</button>
+            <button class="calculator-button number-button py-6 rounded-xl text-2xl font-semibold" data-value="2">2</button>
+            <button class="calculator-button number-button py-6 rounded-xl text-2xl font-semibold" data-value="3">3</button>
+            <button class="calculator-button operator-button py-6 rounded-xl text-2xl font-semibold" data-action="add">+</button>
+
+            <!-- Row 5 -->
+            <button class="calculator-button number-button col-span-2 py-6 rounded-xl text-2xl font-semibold" data-value="0">0</button>
+            <button class="calculator-button decimal-button py-6 rounded-xl text-2xl font-semibold" data-value=".">.</button>
+            <button class="calculator-button equals-button py-6 rounded-xl text-2xl font-semibold" data-action="equals">=</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const display = document.querySelector('.display');
+            const buttons = document.querySelector('.calculator-grid');
+
+            let currentInput = '0'; // The number currently being entered
+            let fullExpression = ''; // The full string of the mathematical expression
+            let pendingOperation = null; // Stores the operator (+, -, *, /)
+            let awaitingNewOperand = false; // True if the next digit should start a new number
+
+            // Helper to get operator symbol
+            function getOperatorSymbol(op) {
+                switch(op) {
+                    case 'add': return '+';
+                    case 'subtract': return '-';
+                    case 'multiply': return '*';
+                    case 'divide': return '/';
+                    default: return '';
+                }
+            }
+
+            // Function to update the display and adjust font size and truncate if needed
+            function updateDisplay() {
+                let textToDisplay = fullExpression === '' ? '0' : fullExpression;
+                display.textContent = textToDisplay; // Set initial text to measure
+
+                // Reset font size to original
+                display.style.fontSize = display.dataset.originalFontSize;
+                // Reset white-space and word-break for initial measurement
+                display.style.whiteSpace = 'nowrap'; // Start by trying to fit on one line
+                display.style.wordBreak = 'normal'; // Default word break behavior
+
+                const maxFontSize = parseFloat(display.dataset.originalFontSize);
+                const minFontSize = 0.7; // Minimum font size in rem
+                let currentFontSize = maxFontSize;
+
+                // Phase 1: Shrink font to fit on one line (horizontally)
+                while (display.scrollWidth > display.clientWidth && currentFontSize > minFontSize) {
+                    currentFontSize -= 0.1;
+                    display.style.fontSize = `${currentFontSize}rem`;
+                }
+
+                // If still overflowing horizontally after shrinking on one line, allow wrapping
+                if (display.scrollWidth > display.clientWidth) {
+                    display.style.whiteSpace = 'normal'; // Allow wrapping to multiple lines
+                    display.style.wordBreak = 'break-word'; // Allow breaking long words/numbers
+
+                    // Apply the currentFontSize (from Phase 1) before checking vertical overflow with wrapping
+                    display.style.fontSize = `${currentFontSize}rem`;
+
+                    // Phase 2: Shrink font further to fit within two lines (vertically)
+                    while (display.scrollHeight > display.clientHeight && currentFontSize > minFontSize) {
+                        currentFontSize -= 0.1;
+                        display.style.fontSize = `${currentFontSize}rem`;
+                    }
+
+                    // Phase 3: If still overflowing vertically (more than two lines) after all shrinking, truncate
+                    if (display.scrollHeight > display.clientHeight) {
+                        const ellipsis = '...';
+                        let truncatedText = '';
+
+                        // Binary search to find the maximum suffix length that fits within the display height
+                        let low = 0, high = fullExpression.length;
+                        let bestFitSuffixLength = 0;
+
+                        // Temporarily set the font size to the current (smallest) font size for measurement
+                        display.style.fontSize = `${currentFontSize}rem`;
+
+                        while (low <= high) {
+                            let mid = Math.floor((low + high) / 2);
+                            // Test with the suffix of the full expression
+                            display.textContent = fullExpression.substring(fullExpression.length - mid);
+                            if (display.scrollHeight <= display.clientHeight) {
+                                bestFitSuffixLength = mid;
+                                low = mid + 1;
+                            } else {
+                                high = mid - 1;
+                            }
+                        }
+
+                        // Construct the final truncated text
+                        if (bestFitSuffixLength < fullExpression.length) {
+                            truncatedText = ellipsis + fullExpression.substring(fullExpression.length - bestFitSuffixLength);
+                        } else {
+                            truncatedText = fullExpression; // No truncation needed if it fits
+                        }
+                        display.textContent = truncatedText;
+
+                        // Re-check and adjust font size for the truncated text, if necessary (fine-tuning)
+                        // This loop should ideally not run much if bestFitSuffixLength is accurate
+                        while (display.scrollHeight > display.clientHeight && currentFontSize > minFontSize) {
+                            currentFontSize -= 0.05; // Smaller step for fine-tuning
+                            display.style.fontSize = `${currentFontSize}rem`;
+                        }
+                    }
+                }
+
+                // Apply the final determined font size
+                display.style.fontSize = `${currentFontSize}rem`;
+            }
+
+            // Function to clear all
+            function clearAll() {
+                currentInput = '0';
+                fullExpression = '';
+                pendingOperation = null;
+                awaitingNewOperand = false;
+                updateDisplay();
+            }
+
+            // Function to delete last character
+            function deleteLast() {
+                if (fullExpression === '' || fullExpression === '0') { // Nothing to delete or only '0'
+                    currentInput = '0';
+                    fullExpression = '0';
+                    updateDisplay();
+                    return;
+                }
+
+                const lastChar = fullExpression.slice(-1);
+
+                // Check if deleting an operator (e.g., " 5 +")
+                const operatorSymbols = ['+', '-', '*', '/'];
+                let deletedOperator = false;
+                if (fullExpression.length >= 2 && lastChar === ' ') { // Check for space before operator
+                    const potentialOperator = fullExpression.slice(-2, -1);
+                    if (operatorSymbols.includes(potentialOperator)) {
+                        fullExpression = fullExpression.slice(0, -2); // Remove " +", " -" etc.
+                        pendingOperation = null;
+                        awaitingNewOperand = false;
+                        deletedOperator = true;
+                    }
+                } else if (operatorSymbols.includes(lastChar)) { // If operator is last char without space (e.g. after error)
+                     fullExpression = fullExpression.slice(0, -1);
+                     pendingOperation = null;
+                     awaitingNewOperand = false;
+                     deletedOperator = true;
+                }
+
+
+                if (!deletedOperator) {
+                    // If not an operator, delete the last character of the number
+                    currentInput = currentInput.slice(0, -1);
+                    fullExpression = fullExpression.slice(0, -1);
+
+                    if (currentInput === '') {
+                        // If current number becomes empty, try to get the previous number from fullExpression
+                        const parts = fullExpression.split(/[\+\-\*\/]/).filter(part => part.trim() !== '');
+                        if (parts.length > 0) {
+                            currentInput = parts[parts.length - 1].trim();
+                        } else {
+                            currentInput = '0'; // If no more numbers, reset to '0'
+                        }
+                    }
+                }
+
+                if (fullExpression === '') {
+                    fullExpression = '0';
+                    currentInput = '0';
+                }
+                updateDisplay();
+            }
+
+
+            // Function to append a number
+            function appendNumber(number) {
+                if (awaitingNewOperand) {
+                    // Start a new operand after an operator or equals
+                    currentInput = number;
+                    fullExpression += ' ' + number; // Append to full expression
+                    awaitingNewOperand = false;
+                } else {
+                    if (fullExpression === '0' && number !== '.') {
+                        // Replace initial '0' with the first digit
+                        currentInput = number;
+                        fullExpression = number;
+                    } else if (number === '.' && currentInput.includes('.')) {
+                        return; // Prevent multiple decimal points
+                    } else {
+                        currentInput += number;
+                        fullExpression += number; // Append to full expression
+                    }
+                }
+                updateDisplay();
+            }
+
+            // Function to set an operator
+            function setOperation(op) {
+                if (fullExpression === '' || fullExpression === '0') {
+                    // Don't allow operator as the very first input
+                    return;
+                }
+
+                const opSymbol = getOperatorSymbol(op);
+                const trimmedExpression = fullExpression.trim();
+                const lastCharOfExpression = trimmedExpression.slice(-1);
+
+                // Check if the last character is already an operator. If so, replace it.
+                const isLastCharOperator = ['+', '-', '*', '/'].includes(lastCharOfExpression);
+
+                if (isLastCharOperator) {
+                    fullExpression = trimmedExpression.slice(0, -1) + ' ' + opSymbol;
+                } else {
+                    fullExpression += ' ' + opSymbol;
+                }
+
+                pendingOperation = op;
+                awaitingNewOperand = true; // Next digit will start a new number
+                updateDisplay();
+            }
+
+            // Function to perform calculation
+            function calculate() {
+                if (fullExpression === '') return;
+
+                try {
+                    // Remove any trailing operators before evaluation
+                    let expressionToEvaluate = fullExpression.trim();
+                    const lastChar = expressionToEvaluate.slice(-1);
+                    if (['+', '-', '*', '/'].includes(lastChar)) {
+                        expressionToEvaluate = expressionToEvaluate.slice(0, -1).trim();
+                    }
+
+                    // Use eval for simplicity for now, but for production, a safer parser is recommended.
+                    const result = eval(expressionToEvaluate);
+
+                    if (result === Infinity || result === -Infinity) {
+                        currentInput = 'Error: Div by 0';
+                        fullExpression = 'Error: Div by 0';
+                        updateDisplay();
+                        setTimeout(() => clearAll(), 1500);
+                        return;
+                    }
+
+                    currentInput = result.toString();
+                    fullExpression = result.toString(); // Display only the result
+                    pendingOperation = null;
+                    awaitingNewOperand = true; // Next digit will start a new calculation
+                    updateDisplay();
+                } catch (e) {
+                    currentInput = 'Error';
+                    fullExpression = 'Error';
+                    updateDisplay();
+                    setTimeout(() => clearAll(), 1500);
+                }
+            }
+
+            // Event listener for button clicks
+            buttons.addEventListener('click', (e) => {
+                const target = e.target;
+                if (!target.matches('button')) return;
+
+                if (target.dataset.value) {
+                    appendNumber(target.dataset.value);
+                } else if (target.dataset.action) {
+                    const action = target.dataset.action;
+                    switch (action) {
+                        case 'clear':
+                            clearAll();
+                            break;
+                        case 'delete':
+                            deleteLast();
+                            break;
+                        case 'add':
+                        case 'subtract':
+                        case 'multiply':
+                        case 'divide':
+                            setOperation(action);
+                            break;
+                        case 'equals':
+                            calculate();
+                            break;
+                    }
+                }
+            });
+
+            // Initial display update
+            updateDisplay();
+        });
+    </script>
+</body>
+</html>

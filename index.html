@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Versions</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for a subtle background pattern */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light gray background */
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        /* Custom button styles for a unique look */
+        .cta-button {
+            transition: all 0.3s ease;
+            transform: scale(1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            /* Ensure consistent height for all buttons */
+            height: 5rem; /* Equivalent to Tailwind's h-20, ensuring uniform height */
+            display: flex; /* Use flexbox to center content vertically */
+            align-items: center;
+            justify-content: center;
+        }
+        .cta-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .cta-button:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
+    <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 lg:p-12 max-w-4xl w-full text-center border border-gray-200">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 sm:mb-8 leading-tight">
+            Explore Our <span class="text-indigo-600">Calculator</span> Versions
+        </h1>
+        <p class="text-lg sm:text-xl text-gray-600 mb-8 sm:mb-10 max-w-2xl mx-auto">
+            Choose a calculator experience that suits your needs. Each version offers a unique design and feel.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            <!-- Calculator V1 -->
+            <a href="all-versions/ui-ux-calculator-javascript-v1.html" class="block">
+                <button class="cta-button w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-4 px-6 rounded-xl text-lg sm:text-xl transform hover:scale-102 focus:outline-none focus:ring-4 focus:ring-indigo-300">
+                    Calculator V1
+                </button>
+            </a>
+
+            <!-- Calculator V2 -->
+            <a href="all-versions/ui-ux-calculator-javascript-v2.html" class="block">
+                <button class="cta-button w-full bg-gradient-to-r from-green-500 to-teal-600 text-white font-semibold py-4 px-6 rounded-xl text-lg sm:text-xl transform hover:scale-102 focus:outline-none focus:ring-4 focus:ring-green-300">
+                    Calculator V2
+                </button>
+            </a>
+
+            <!-- Calculator V3 -->
+            <a href="all-versions/ui-ux-calculator-javascript-v3.html" class="block">
+                <button class="cta-button w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold py-4 px-6 rounded-xl text-lg sm:text-xl transform hover:scale-102 focus:outline-none focus:ring-4 focus:ring-yellow-300">
+                    Calculator V3
+                </button>
+            </a>
+
+            <!-- Calculator V4 -->
+            <a href="all-versions/ui-ux-calculator-javascript-v4.html" class="block">
+                <button class="cta-button w-full bg-gradient-to-r from-red-500 to-pink-600 text-white font-semibold py-4 px-6 rounded-xl text-lg sm:text-xl transform hover:scale-102 focus:outline-none focus:ring-4 focus:ring-red-300">
+                    Calculator V4
+                </button>
+            </a>
+        </div>
+    </div>
+
+    <!-- Moved "Designed by Rana Abubakar" text inside the main flex container and added margin-top -->
+    <p class="text-gray-500 text-sm mt-8">Designed by Rana Abubakar</p>
+
+    <script>
+        // Optional: Add a subtle animation to the main container on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.bg-white');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                container.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
